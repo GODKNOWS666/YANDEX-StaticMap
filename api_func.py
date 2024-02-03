@@ -79,6 +79,7 @@ def calculate_scale(top_left: tuple, bottom_right: str):
 
 def show_image(image_data, ll, z):
     z = int(z)
+    ll1, ll2 = tuple(map(float, ll.split(',')))
     pygame.init()
     image = pygame.image.load(BytesIO(image_data))
     image_rect = image.get_rect()
@@ -91,17 +92,37 @@ def show_image(image_data, ll, z):
             if event.type == pygame.QUIT:
                 pygame.quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_PAGEUP:
                     if z < 21:
                         z += 1
                         image = pygame.image.load(BytesIO(get_map_image_by_ll_z(ll, z)))
                         screen.blit(image, (0, 0))
-                elif event.key == pygame.K_DOWN:
+                elif event.key == pygame.K_PAGEDOWN:
                     if z > 0:
                         z -= 1
                         image = pygame.image.load(BytesIO(get_map_image_by_ll_z(ll, z)))
                         screen.blit(image, (0, 0))
+                elif event.key == pygame.K_UP:
+                    ll1 += 5
+                    print(ll1)
+                    image = pygame.image.load(BytesIO(get_map_image_by_ll_z(f'{ll1},{ll2}', z)))
+                    screen.blit(image, (0, 0))
+                elif event.key == pygame.K_DOWN:
+                    ll1 -= 5
+                    print(ll1)
+                    image = pygame.image.load(BytesIO(get_map_image_by_ll_z(f'{ll1},{ll2}', z)))
+                    screen.blit(image, (0, 0))
+                elif event.key == pygame.K_RIGHT:
+                    ll2 += 5
+                    print(ll2)
+                    image = pygame.image.load(BytesIO(get_map_image_by_ll_z(f'{ll1},{ll2}', z)))
+                    screen.blit(image, (0, 0))
+                elif event.key == pygame.K_LEFT:
+                    ll2 -= 5
+                    print(ll2)
 
+                    image = pygame.image.load(BytesIO(get_map_image_by_ll_z(f'{ll1},{ll2}', z)))
+                    screen.blit(image, (0, 0))
         pygame.display.flip()
 
 
