@@ -42,11 +42,11 @@ def get_map_image_by_geocode(geocode: str, index=0, add_point=False, autoscale=F
     return response.content
 
 
-def get_map_image_by_ll_z(ll, z):
+def get_map_image_by_ll_z(lll, zz):
     geocoder_params = {
         "l": 'map',
-        "ll": ll,
-        "z": str(z),
+        "ll": lll,
+        "z": str(zz),
     }
 
     response = requests.get(STATIC_API_URL, geocoder_params)
@@ -62,7 +62,23 @@ def calculate_scale(top_left: tuple, bottom_right: str):
     return span
 
 
-def show_image(image_data):
+# def show_image(image_data):
+#    pygame.init()
+#    image = pygame.image.load(BytesIO(image_data))
+#    image_rect = image.get_rect()
+#    width, height = image_rect[2], image_rect[3]
+#    screen = pygame.display.set_mode((width, height))
+#    screen.blit(image, (0, 0))
+#    running = True
+#    while running:
+#        for event in pygame.event.get():
+#            if event.type == pygame.QUIT:
+#                return
+#        pygame.display.flip()
+
+
+def show_image(image_data, ll, z):
+    z = int(z)
     pygame.init()
     image = pygame.image.load(BytesIO(image_data))
     image_rect = image.get_rect()
@@ -73,9 +89,22 @@ def show_image(image_data):
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return
+                pygame.quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    if z < 21:
+                        z += 1
+                        image = pygame.image.load(BytesIO(get_map_image_by_ll_z(ll, z)))
+                        screen.blit(image, (0, 0))
+                elif event.key == pygame.K_DOWN:
+                    if z > 0:
+                        z -= 1
+                        image = pygame.image.load(BytesIO(get_map_image_by_ll_z(ll, z)))
+                        screen.blit(image, (0, 0))
+
         pygame.display.flip()
 
 
-image = get_map_image_by_geocode(input(), add_point=True, autoscale=True)
-show_image(image)
+ll, z = input(), int(input())
+image = get_map_image_by_ll_z(ll, z)
+show_image(image, ll, z)
